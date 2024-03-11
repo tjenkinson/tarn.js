@@ -86,7 +86,7 @@ export class Pool<T> {
       );
     }
 
-    if (!checkOptionalTime(opt.idleTimeoutMillis)) {
+    if (opt.idleTimeoutMillis !== 0 && !checkOptionalTime(opt.idleTimeoutMillis)) {
       throw new Error(
         'Tarn: invalid opt.idleTimeoutMillis ' + JSON.stringify(opt.idleTimeoutMillis)
       );
@@ -219,6 +219,9 @@ export class Pool<T> {
         this.free.push(used.resolve());
 
         this._tryAcquireOrCreate();
+        if (this.idleTimeoutMillis === 0) {
+          this.check();
+        }
         return true;
       }
     }
